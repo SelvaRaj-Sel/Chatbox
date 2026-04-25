@@ -11,7 +11,7 @@ import ChatContext from "../context/ChatContext";
 const Sidebar = ({ isOpen, setIsOpen }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const { chats, setChats, deleteChat, toggleEdit, handleNameChange, deleteId, setDeleteId } = useContext(ChatContext);
+  const {chats,activeChatId,setActiveChatId,createNewChat,deleteChat,toggleEdit,handleNameChange,deleteId,setDeleteId,} = useContext(ChatContext);
 
 
   return (
@@ -31,10 +31,13 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             </button>
           </div>
           <div className="pt-4">
-            <div className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded w-full flex items-center px-4 gap-2">
+            <button
+              onClick={createNewChat}
+              className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded w-full flex items-center px-4 gap-2"
+            >
               <p>+</p>
               <p>New Chat</p>
-            </div>
+            </button>
           </div>
         </div>
 
@@ -44,7 +47,13 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           <div className="max-w-md mx-auto">
             {chats.map((chat) => (
               <section key={chat.id} className="w-full">
-                <div className="bg-gray-700 hover:bg-gray-600 text-white font-bold min-h-[3rem] h-auto py-2 rounded w-full flex justify-between items-center px-3 gap-3 mt-4 transition-all">
+                <div
+                  className={`text-white font-bold min-h-[3rem] h-auto py-2 rounded w-full flex justify-between items-center px-3 gap-3 mt-4 transition-all ${
+                    activeChatId === chat.id
+                      ? "bg-gray-700"
+                      : "bg-gray-600/80 hover:bg-gray-600"
+                  }`}
+                >
                   <div className="flex items-center gap-2 flex-1 min-w-0">
                     <CiChat1 className="text-xl flex-shrink-0" />
                     {chat.isEditing ? (
@@ -60,8 +69,11 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                         }
                       />
                     ) : (
-                      <p className="truncate text-sm sm:text-base font-medium">
-                        {chat.text}
+                      <p
+                        className="truncate text-sm sm:text-base font-medium cursor-pointer"
+                        onClick={() => setActiveChatId(chat.id)}
+                      >
+                        {chat.title}
                       </p>
                     )}
                   </div>

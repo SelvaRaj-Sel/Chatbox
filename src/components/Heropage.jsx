@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { AiOutlineThunderbolt } from "react-icons/ai";
 import { FiPaperclip } from "react-icons/fi";
 import { HiOutlineMicrophone } from "react-icons/hi";
@@ -28,129 +28,95 @@ const Heropage = () => {
     },
   ];
 
-  const {
-    input,
-    setInput,
-    handlesend,
-    chats,
-    setChats,
-    deleteChat,
-    toggleEdit,
-    handleNameChange,
-    deleteId,
-    setDeleteId,
+  const {input,setInput,handlesend,activeChat,updateMessageText,toggleMessageEdit,deleteMessage,
   } = useContext(ChatContext);
 
+  const messages = activeChat?.messages || [];
+  const showHero = messages.length === 0;
+
   return (
-    <section className="flex flex-col justify-between min-h-min gap-9">
-      {chats ? (chats.map((chat) => (
-          <div
-            key={chat.id}
-            className={`flex ${
-              chat.sender === "user" ? "justify-end" : "justify-start"
-            }`}
-          >
-            <div className="max-w-xs px-4 py-2 rounded-lg flex items-start gap-3 bg-gray-200 text-gray-800">
-              <FaUser className="bg-green-100 h-5 w-5 p-1 rounded" />
-
-              <div className="flex flex-col flex-1">
-                <p className="text-xs text-gray-500">
-                  {chat.sender === "user" ? "You" : "ZingAI"}
-                </p>
-
-                {chat.isEditing ? (
-                  <input
-                    value={chat.text}
-                    autoFocus
-                    onChange={(e) => handleNameChange(chat.id, e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") toggleEdit(chat.id);
-                    }}
-                    className="bg-white border px-2 py-1 rounded outline-none text-sm"
-                  />
-                ) : (
-                  <p className="text-sm">{chat.text}</p>
-                )}
-              </div>
-
-              {/* Actions */}
-              <div className="flex flex-col gap-1 text-gray-500">
-                <button onClick={() => toggleEdit(chat.id)}>
-                  {chat.isEditing ? (
-                    <MdCheck className="text-green-500" />
-                  ) : (
-                    <MdModeEdit />
-                  )}
-                </button>
-
-                <button
-                  onClick={() => setDeleteId(chat.id)}
-                  className="hover:text-red-500"
-                >
-                  <MdDelete />
-                </button>
-                {deleteId && (
-                  <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
-                    <div className="bg-gray-800 border border-gray-600 p-6 rounded-lg shadow-xl max-w-sm w-full transform transition-all">
-                      <h3 className="text-white text-lg font-bold mb-2">
-                        Delete Chat?
-                      </h3>
-                      <p className="text-gray-400 text-sm mb-6">
-                        This action cannot be undone. Are you sure you want to
-                        delete this conversation?
-                      </p>
-
-                      <div className="flex justify-end gap-3">
-                        <button
-                          onClick={() => setDeleteId(null)}
-                          className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors"
-                        >
-                          Cancel
-                        </button>
-
-                        <button
-                          onClick={() => {
-                            deleteChat(deleteId);
-                            setDeleteId(null);
-                          }}
-                          className="px-4 py-2 text-sm font-bold bg-red-600 hover:bg-red-700 text-white rounded transition-colors"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
+    <section className="flex min-h-[calc(100vh-4rem)] flex-col">
+      {showHero ? (
+        <div className="flex flex-1 flex-col items-center justify-center px-4 text-center">
+          <div className="mt-6 flex h-12 w-12 items-center justify-center rounded-md bg-green-500">
+            <AiOutlineThunderbolt className="text-3xl font-bold text-white" />
           </div>
-        ))
-        ) : (
-      <div className="flex flex-col items-center justify-center text-center px-4">
-        {/* logo */}
-        <div className="flex items-center justify-center h-12 w-12 bg-green-500 rounded-md mt-6">
-          <AiOutlineThunderbolt className="text-white text-3xl font-bold" />
+          <p className="mt-3 text-3xl font-bold text-green-500 sm:text-4xl md:text-5xl">
+            Zing<span className="text-blue-500">AI</span>
+          </p>
+          <h1 className="mt-4 font-semibold text-gray-400">
+            Ask me anything. I am here to help you.
+          </h1>
+          <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2">
+            {features.map((feature, index) => (
+              <div
+                key={index}
+                className="flex flex-col items-center rounded-lg bg-gray-100 p-4 text-center"
+              >
+                <h3 className="mt-4 text-lg font-bold">{feature.title}</h3>
+                <p className="mt-2 text-gray-500">{feature.description}</p>
+              </div>
+            ))}
+          </div>
         </div>
-        <p className="text-3xl sm:text-4xl md:text-5xl font-bold mt-3 text-green-500">
-          Zing<span className="text-blue-500">AI</span>
-        </p>
-        <h1 className="font-semibold mt-4 text-gray-400">
-          Ask me anything. I am here to help you.
-        </h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-10">
-          {features.map((feature, index) => (
-            <div
-              key={index}
-              className="flex flex-col items-center text-center p-4 bg-gray-100 rounded-lg"
-            >
-              <h3 className="font-bold mt-4 text-lg">{feature.title}</h3>
-              <p className="text-gray-500 mt-2">{feature.description}</p>
-            </div>
-          ))}
+      ) : (
+        <div className="flex-1 overflow-y-auto px-4 py-4 sm:px-6">
+          <div className="mx-auto flex w-full max-w-3xl flex-col gap-4">
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className={`flex ${
+                  message.sender === "user" ? "justify-end" : "justify-start"
+                }`}
+              >
+                <div className="flex w-full max-w-xl items-start gap-3 rounded-lg bg-gray-200 px-4 py-2 text-gray-800">
+                  <FaUser className="h-5 w-5 rounded bg-green-100 p-1" />
+
+                  <div className="flex flex-1 flex-col">
+                    <p className="text-xs text-gray-500">
+                      {message.sender === "user" ? "You" : "ZingAI"}
+                    </p>
+                    {message.isEditing ? (
+                      <input
+                        value={message.text}
+                        autoFocus
+                        onChange={(e) => updateMessageText(message.id, e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") toggleMessageEdit(message.id);
+                        }}
+                        className="rounded border bg-white px-2 py-1 text-sm outline-none"
+                      />
+                    ) : (
+                      <p className="text-sm break-words">{message.text}</p>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-1 text-gray-500">
+                    <button
+                      onClick={() => toggleMessageEdit(message.id)}
+                      className="rounded p-1 hover:bg-gray-300"
+                    >
+                      {message.isEditing ? (
+                        <MdCheck className="text-green-600" />
+                      ) : (
+                        <MdModeEdit />
+                      )}
+                    </button>
+                    <button
+                      onClick={() => deleteMessage(message.id)}
+                      className="rounded p-1 hover:bg-red-100 hover:text-red-500"
+                    >
+                      <MdDelete />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>)}
-      {/* chat interface */}
-      <div className="w-full px-3 sm:px-6 pb-4 border-t border-gray-300">
+      )}
+
+      <div className="w-full border-t border-gray-300 px-3 pb-4 sm:px-6">
         <div className="max-w-3xl mx-auto py-4">
           <div className="bg-gray-100 border border-gray-300 rounded-2xl p-3 shadow-sm focus-within:ring-2 focus-within:ring-green-400 transition">
             <div className="flex items-start gap-2">
