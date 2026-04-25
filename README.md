@@ -1,16 +1,111 @@
-# React + Vite
+# Chatbox (ZingAI) - Product Specification
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A lightweight ChatGPT-style chat UI built with React + Vite + TailwindCSS.
 
-Currently, two official plugins are available:
+## Project Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Chatbox is a single-page web app that provides:
+- a collapsible sidebar with chat history
+- a hero/features view for empty chats
+- message-based chat interface with send, edit, and delete actions
+- multi-session conversation management
 
-## React Compiler
+## Functional Specification
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 1) Chat Sessions
 
-## Expanding the ESLint configuration
+- User can create a new chat session from sidebar **New Chat** button.
+- Every chat session has:
+  - `id`
+  - `title`
+  - `isEditing`
+  - `messages[]`
+- User can select active chat from sidebar.
+- User can rename or delete a chat session from sidebar.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 2) Hero / Empty State
+
+- If active chat has **no messages**, app shows hero section with product branding and feature cards.
+- If active chat has **messages**, hero section is hidden and messages are shown.
+
+### 3) Messaging
+
+- User can type input in bottom composer and send message.
+- Sent message is appended to currently active chat.
+- If no chat is active, a new chat is created automatically and message is added.
+- Each message supports:
+  - edit mode
+  - delete action
+- Message area is scrollable when content exceeds viewport height.
+
+### 4) Layout & Navigation
+
+- Top navbar includes menu button and model selector UI.
+- Sidebar can be opened/closed.
+- Main content area adapts based on sidebar visibility.
+
+## Non-Functional Specification
+
+- **Framework:** React (Vite)
+- **Styling:** TailwindCSS
+- **Icons:** React Icons
+- **State Management:** React Context API (`ChatContext`)
+- **Performance Target:** fast local interactions, no blocking UI operations for common actions
+- **Current Storage:** in-memory state (resets on page refresh)
+
+## Current Limitations
+
+- No backend/API integration for AI responses yet.
+- No persistent storage (localStorage/database) implemented yet.
+- No authentication/authorization.
+- No automated test suite configured yet.
+
+## Suggested Next Enhancements
+
+- Add AI assistant replies (mock or API-based).
+- Persist chats using localStorage or backend.
+- Add Enter-to-send + Shift+Enter newline behavior.
+- Add auto-scroll to latest message.
+- Add loading state and error handling for async message responses.
+
+## Technical Structure
+
+```txt
+src/
+  App.jsx
+  context/
+    ChatContext.jsx
+  components/
+    Navbar.jsx
+    Sidebar.jsx
+    Heropage.jsx
+```
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- npm 9+
+
+### Install
+
+```bash
+npm install
+```
+
+### Run Development Server
+
+```bash
+npm run dev
+
+```
+
+## Acceptance Criteria (Current)
+
+- Creating a new chat from sidebar works.
+- Selecting different chats updates message view.
+- Hero view appears only when active chat has zero messages.
+- Message list is scrollable for long conversations.
+- Message edit and delete actions are available in chat view.
+- Project builds successfully with `npm run build`.
